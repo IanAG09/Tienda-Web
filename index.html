@@ -102,17 +102,21 @@
 
         // 2. FUNCIONES DE REGISTRO Y LOGIN
         async function registrarse() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const { error } = await db.auth.signUp({ email, password });
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    
+    const { error } = await db.auth.signUp({ email, password });
 
-            if (error) {
-                document.getElementById("mensaje-auth").innerText = "Error: " + error.message;
-            } else {
-                document.getElementById("mensaje-auth").style.color = "green";
-                document.getElementById("mensaje-auth").innerText = "Registro exitoso. Ahora haz clic en Iniciar Sesión.";
-            }
-        }
+    if (error) {
+        document.getElementById("mensaje-auth").style.color = "red";
+        document.getElementById("mensaje-auth").innerText = "Error: " + error.message;
+    } else {
+        // Guarda también el usuario en la tabla 'usuarios'
+        await db.from('usuarios').insert([{ email: email }]);
+        document.getElementById("mensaje-auth").style.color = "green";
+        document.getElementById("mensaje-auth").innerText = "Registro exitoso. Ahora haz clic en Iniciar Sesión.";
+    }
+}
 
         async function iniciarSesion() {
             const email = document.getElementById("email").value;
